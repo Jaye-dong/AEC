@@ -1,19 +1,19 @@
 
 clear;clc;
 %% 音频输入
-[x, fs_far] = audioread('./audio/far.wav');
-[d, fs_near] = audioread('./audio/near.wav');
+[x, fs_far] = audioread('./audio/far_slice.wav');
+[d, fs_near] = audioread('./audio/near_slice.wav');
 far = x;
 near = d;
 
 %% 播放远端信号
-sound(far, 16000);
+%sound(far, 16000);
 
 %% 播放近端信号
 sound(near, 16000);
 
 %% kalman filter 参数初始化
-L = 256;
+L = 32;
 P = 1;
 delta = 0.0001;
 w_cov = 0.01;
