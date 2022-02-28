@@ -5,9 +5,15 @@ clear;clc;
 [d, fs_near] = audioread('./audio/near_slice.wav');
 far = x;
 near = d;
+fs = fs_far;
+% 初始化实时音频播放器（用电脑设备播放音频）
+player          = audioDeviceWriter('SupportVariableSizeInput', true, ...
+                                    'BufferSize', 512, 'SampleRate', fs);
+% 模拟信号源(从matlab工作区输入变量，一次输出一个frame大小）
+nearSpeechSrc = dsp.SignalSource('Signal',near,'SamplesPerFrame',frameSize);
 
 %% kalman filter 参数初始化
-L = 1024;
+L = 64;
 P = 1;
 delta = 0.0001;
 w_cov = 0.01;
@@ -25,7 +31,6 @@ Rmu = delta * IL;
 for ii = 1:length(far)-L
     X = far(ii:ii+L-1);%%取出其中一帧
     [e(ii), Rmu, h_hat] = kalman_filter_aec_realtime(X,near(ii+L),Rmu,w_cov,v_conv,IL,IP,h_hat);
-    
 end
 len = length(far);
 
@@ -44,6 +49,4 @@ for ii = N:len-1
     end
 end
 mean(erle)
-plot(erle)
-audiowrite("1024_kalman_filter.wav",e, fs_near);
 % sound(e,16000)
