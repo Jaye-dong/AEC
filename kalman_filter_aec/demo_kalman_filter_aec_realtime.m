@@ -7,7 +7,7 @@ far = x;
 near = d;
 
 %% kalman filter 参数初始化
-L = 1024;
+L = 128;
 P = 1;
 delta = 0.0001;
 w_cov = 0.01;
@@ -24,7 +24,11 @@ Rmu = delta * IL;
 
 for ii = 1:length(far)-L
     X = far(ii:ii+L-1);%%取出其中一帧
-    [e(ii), Rmu, h_hat] = kalman_filter_aec_realtime(X,near(ii+L),Rmu,w_cov,v_conv,IL,IP,h_hat);
+    if rem(ii,2) == 0
+        [e(ii), Rmu, h_hat] = kalman_filter_aec_realtime(X,near(ii+L),Rmu,w_cov,v_conv,IL,IP,h_hat);
+    else
+        e(ii) = near(ii+L) - X'*h_hat;
+    end
     
 end
 len = length(far);
@@ -45,5 +49,5 @@ for ii = N:len-1
 end
 mean(erle)
 plot(erle)
-audiowrite("1024_kalman_filter.wav",e, fs_near);
+% audiowrite("1024_kalman_filter.wav",e, fs_near);
 % sound(e,16000)

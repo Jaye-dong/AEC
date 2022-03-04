@@ -1,14 +1,14 @@
 clear;clc;
 %% 音频输入
-[x, fs_far] = audioread('./audio/far.wav');
-[d, fs_near] = audioread('./audio/near.wav');
+[x, fs_far] = audioread('./audio/far_slice.wav');
+[d, fs_near] = audioread('./audio/near_slice.wav');
 far = x;
 near = d;
 ssin = near;
 rrin = far;
 
 
-N = 2048;
+N = 256;
 len = length(ssin);
 y = zeros(1,len);
 w = zeros(1,N);
@@ -29,7 +29,10 @@ for ii = N:len-1
     sumd = sum(SSin(1,ii-N+1:ii).^2);
     sume = sum(er(1,ii-N+1:ii).^2);
     erle(ii-N+1) = 10*log10(sumd/sume);
-    
+    if erle(ii-N+1) < 0
+       erle(ii-N+1) = 0;
+    end
+       
 end
 % sound(er,16000)
 max(erle)
